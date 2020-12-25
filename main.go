@@ -21,7 +21,7 @@ import (
 	"os/user"
 	"strconv"
 
-	"./plugin"
+	"github.com/rayer4u/casbin-authz-plugin/plugin"
 	"github.com/docker/go-plugins-helpers/authorization"
 )
 

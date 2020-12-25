@@ -13,6 +13,7 @@ else
     exit 1
 fi
 
+cd /etc/docker
 
 ## client
 docker run --rm -v $(pwd)/ssl:/certs \

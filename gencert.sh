@@ -8,7 +8,7 @@ cd /etc/docker
 
 ## server cert
 docker run --rm -v $(pwd)/ssl:/certs \
-    -e CA_EXPIRE=36500 -e SSL_KEY=server-key.pem -e SSL_CSR=server.csr -e SSL_CERT=server.pem -e SSL_EXPIRE=3650 -e SSL_SUBJECT=$HOSTNAME  \
+    -e CA_EXPIRE=36500 -e SSL_KEY=server-key.pem -e SSL_CSR=server.csr -e SSL_CERT=server.pem -e SSL_EXPIRE=3650 -e SSL_SUBJECT=$HOSTNAME  -e SSL_DNS=localhost\
     paulczar/omgwtfssl
 
 ## root client

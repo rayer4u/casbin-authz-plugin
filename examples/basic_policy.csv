@@ -1,4 +1,5 @@
 p, ray, /_ping, GET
+p, ray, /version, GET
 p, ray, /v1.*/*, GET
 #p, ray, /v1.40/images/json, GET
 #p, ray, /v1.40/version, GET
