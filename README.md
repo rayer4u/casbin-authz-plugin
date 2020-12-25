@@ -1,6 +1,35 @@
+# 基于casbin-authz-plugin添加针对linux用户的权限控制
+
+需求是对于不是root的linux用户能做相应授权，而root用户不受限制。需要配置docker https daemon。
+参考：
+- [Protect the Docker daemon socket ](https://docs.docker.com/engine/security/https/)
+- [Securing Docker with TLS certificates](https://tech.paulcz.net/2016/01/secure-docker-with-tls/)
+
+步骤如下：
+
+1. 生成证书
+
+   `gencert.sh`生成ca和服务器和root证书，并应用
+   `gencert_client.sh`生成相应用户的证书，并应用
+
+2. docker启动修改
+
+   ```
+   $ systemctl edit docker
+
+   [Service]
+   ExecStart=/usr/bin/dockerd -H 127.0.1.1:2376 --containerd=/run/containerd/containerd.sock --tlsverify --tlscacert=/etc/docker/ssl/ca.pem --tlscert=/etc/docker/ssl/server.pem --tlskey=/etc/docker/ssl/server-key.pem --authorization-plugin=casbin-authz-plugin
+   ```
+
+3. client修改
+
+   ```
+   export DOCKER_HOST=tcp://$HOSTNAME:2376 DOCKER_TLS_VERIFY=1
+   ```
+
 # Docker RBAC & ABAC Authorization Plugin based on Casbin [![Go Report Card](https://goreportcard.com/badge/github.com/casbin/casbin-authz-plugin)](https://goreportcard.com/report/github.com/casbin/casbin-authz-plugin) [![Build Status](https://travis-ci.org/casbin/casbin.svg?branch=master)](https://travis-ci.org/casbin/casbin) [![GoDoc](https://godoc.org/github.com/casbin/casbin-authz-plugin?status.svg)](https://godoc.org/github.com/casbin/casbin-authz-plugin)
 
-# TAKE NOTE: the instructions below is valid only for LINUX Host OS
+**TAKE NOTE: the instructions below is valid only for LINUX Host OS**
 
 This plugin controls the access to Docker commands based on authorization policy. The functionality of authorization is provided by [Casbin](https://github.com/casbin/casbin). Since Docker doesn't perform authentication by now, there's no user information when executing Docker commands. The access that Casbin plugin can control is actually what HTTP method can be performed on what URL path.
 

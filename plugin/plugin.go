@@ -18,7 +18,7 @@ import (
 	"log"
 	"net/url"
 
-	"github.com/casbin/casbin/v2"
+	"github.com/casbin/casbin"
 	"github.com/docker/go-plugins-helpers/authorization"
 )
 
@@ -49,17 +49,23 @@ func (plugin *CasbinAuthZPlugin) AuthZReq(req authorization.Request) authorizati
 	obj := reqURL.String()
 	act := req.RequestMethod
 
-	allowed, err := plugin.enforcer.Enforce(obj, act)
+	if req.RequestPeerCertificates == nil {
+		return authorization.Response{Allow: false, Msg: "only support tls mode"}
+	}
+
+	cn := req.RequestPeerCertificates[0].Subject.CommonName
+
+	allowed, err := plugin.enforcer.Enforce(cn, obj, act)
 	if err != nil {
 		panic(err)
 	}
 
 	if allowed {
-		log.Println("obj:", obj, ", act:", act, "res: allowed")
+		log.Println("sub:", cn, "obj:", obj, ", act:", act, "res: allowed")
 		return authorization.Response{Allow: true}
 	}
 
-	log.Println("obj:", obj, ", act:", act, "res: denied")
+	log.Println("sub:", cn, "obj:", obj, ", act:", act, "res: denied")
 	return authorization.Response{Allow: false, Msg: "Access denied by casbin plugin"}
 }
 

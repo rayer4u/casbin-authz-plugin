@@ -5,7 +5,7 @@ After=network.target casbin-authz-plugin.socket
 Requires=casbin-authz-plugin.socket docker.service
 
 [Service]
-ExecStart=/usr/lib/docker/casbin-authz-plugin
+ExecStart=/usr/lib/docker/casbin-authz-plugin -model basic_model.conf -policy basic_policy.csv
 WorkingDirectory=/usr/lib/docker
 
 [Install]
